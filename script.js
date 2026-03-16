@@ -48,4 +48,4 @@ async function fetchTrainerData(username) {
 }
 
 // Example: Load Branden's data when the page loads
-fetchTrainerData('Branden');
+fetchTrainerData('dranben');
