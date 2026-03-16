@@ -56,3 +56,102 @@ body {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.55rem;
     cursor: pointer;
+    border-bottom: 3px solid #000;
+}
+
+#search-btn:active {
+    border-bottom: 0;
+    transform: translateY(2px);
+}
+
+/* --- 4. TRAINER NAME DISPLAY --- */
+#trainer-name {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.1rem;
+    text-align: center;
+    background: #313131;
+    padding: 18px 10px;
+    border-radius: 10px;
+    border: 4px solid #111;
+    margin: 0;
+    text-transform: uppercase;
+    color: #51ff00; /* Neon Green Terminal */
+    letter-spacing: 1px;
+}
+
+/* --- 5. STATS ROW --- */
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    background: #ffffff;
+    color: #313131;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    border: 3px solid #ccc;
+    font-size: 0.9rem;
+}
+
+.stats-container span {
+    color: #e3350d;
+}
+
+/* --- 6. POKEMON DISPLAY GRID --- */
+h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    color: white;
+    margin: 5px 0;
+    text-shadow: 2px 2px #a12308;
+}
+
+#pokemon-display {
+    background: #313131;
+    padding: 15px;
+    border-radius: 10px;
+    border: 4px solid #111;
+    display: grid;
+    /* repeat(auto-fill) handles the wrapping, minmax prevents overlap */
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 12px;
+    min-height: 250px;
+    justify-items: center;
+    align-items: center;
+}
+
+/* --- 7. POKEMON SPRITES --- */
+#pokemon-display img {
+    background: #444;
+    border-radius: 50%;
+    padding: 8px;
+    width: 100%; /* Keeps sprite inside its grid cell */
+    height: auto;
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    transition: transform 0.2s ease, background 0.2s ease;
+    border: 2px solid #555;
+}
+
+#pokemon-display img:hover {
+    transform: scale(1.15) rotate(5deg);
+    background: #555;
+    cursor: help;
+}
+
+/* --- 8. SPECIAL EFFECTS --- */
+.shiny-glow {
+    filter: drop-shadow(0 0 8px gold) !important;
+    border: 2px solid gold !important;
+}
+
+.pokerus-border {
+    border: 3px solid #ff00ff !important;
+    box-shadow: inset 0 0 10px #ff00ff;
+}
+
+/* Mobile Tweak: Ensure 3 columns on very small screens */
+@media (max-width: 380px) {
+    #pokemon-display {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
