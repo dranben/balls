@@ -60,23 +60,20 @@ async function fetchTrainerData(username) {
             if (nameParts.length === 0) return; 
             let name = nameParts[0].replace('✨', '').toLowerCase().trim();
 
-            // Create Sprite Element
+            // ... inside your data.collection loop ...
             const img = document.createElement('img');
-            
-            // Try to pull high-quality Home sprites
-            const spritePath = isShiny ? 'shiny' : 'normal';
-            img.src = `https://img.pokemondb.net/sprites/home/${spritePath}/${name}.png`;
+
+            // Set the source
+            img.src = `https://img.pokemondb.net/sprites/home/${isShiny ? 'shiny' : 'normal'}/${name}.png`;
+
+            // This is the "Hover" magic
+            // It sets the browser's native tooltip to show the full catch entry
+            img.title = entry; 
             img.alt = name;
-            img.title = entry; // Tooltip shows IVs on hover
-            
-            // --- ERROR HANDLING: Fallback if sprite is missing ---
-            img.onerror = () => { 
-                img.src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"; 
-                img.style.filter = "grayscale(1)";
-                img.style.opacity = "0.5";
-            };
-            
-            // Apply CSS Classes for special effects
+
+            // Add a specific class so the CSS knows to style the cursor
+            img.classList.add('poke-sprite');
+
             if (isShiny) img.classList.add('shiny-glow');
             if (hasPokerus) img.classList.add('pokerus-border');
 
