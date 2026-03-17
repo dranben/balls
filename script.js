@@ -107,7 +107,7 @@ async function fetchTrainerData(user) {
         document.getElementById('trainer-total').innerText = data.total || 0;
         
         fullCollection = data.collection || [];
-        renderSprites(fullCollection);
+        renderSprites([...fullCollection].reverse());
     } catch (e) { 
         nameEl.innerText = "ERROR"; 
     }
@@ -116,36 +116,29 @@ async function fetchTrainerData(user) {
 function renderSprites(list) {
     const display = document.getElementById('pokemon-display');
     display.innerHTML = "";
+    if (!list) return;
 
-    // 1. Filter out any null or undefined entries first
-    const cleanList = list.filter(entry => entry !== null && entry !== undefined);
+    // Filter out nulls/broken entries
+    const validList = list.filter(Boolean);
 
-    [...cleanList].reverse().forEach(entry => {
+    // REMOVED .reverse() here so it follows the sort order
+    validList.forEach(entry => {
         let name, isShiny, title;
 
-        // 2. NEW OBJECT CHECK
         if (typeof entry === 'object' && entry.n) {
             name = entry.n.toLowerCase();
             isShiny = entry.s === 1;
-            // Handle IV array safety
-            const ivs = entry.iv ? entry.iv.join('/') : '??/??/??';
-            title = `${isShiny ? '✨' : ''}${entry.n} (${ivs})`;
-        } 
-        // 3. LEGACY STRING CHECK
-        else if (typeof entry === 'string') {
+            title = `${isShiny ? '✨' : ''}${entry.n} (${entry.iv.join('/')})`;
+        } else if (typeof entry === 'string') {
             isShiny = entry.includes('✨');
             name = entry.split('(')[0].replace('✨', '').toLowerCase().trim();
             title = entry;
-        } 
-        else {
-            return; // Skip if it's neither
-        }
+        } else { return; }
 
         const img = document.createElement('img');
         img.src = `https://img.pokemondb.net/sprites/home/${isShiny ? 'shiny' : 'normal'}/${name}.png`;
         img.title = title;
         if (isShiny) img.classList.add('shiny-glow');
-        
         img.onerror = () => img.src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
         display.appendChild(img);
     });
@@ -184,28 +177,33 @@ document.getElementById('sort-order').addEventListener('change', (e) => {
     const val = e.target.value;
     let sorted = [...fullCollection];
 
-    if (val === "pokedex") {
+    if (val === "newest") {
+        sorted.reverse(); // Manually reverse for Newest first
+    } 
+    else if (val === "pokedex") {
         sorted.sort((a, b) => {
             const idA = typeof a === 'object' ? a.id : 9999;
             const idB = typeof b === 'object' ? b.id : 9999;
-            return idA - idB;
+            return idA - idB; // 1 to 1025
         });
-    } else if (val === "alpha") {
+    } 
+    else if (val === "alpha") {
         sorted.sort((a, b) => {
             const nameA = typeof a === 'object' ? a.n : a;
             const nameB = typeof b === 'object' ? b.n : b;
-            return nameA.localeCompare(nameB);
+            return nameA.localeCompare(nameB); // A to Z
         });
-    } else if (val === "shiny") {
+    } 
+    else if (val === "shiny") {
         sorted.sort((a, b) => {
-            if (!a || !b) return 0;
-            const isShinyA = (typeof a === 'object') ? a.s : (String(a).includes('✨') ? 1 : 0);
-            const isShinyB = (typeof b === 'object') ? b.s : (String(b).includes('✨') ? 1 : 0);
-            return isShinyB - isShinyA;
+            const isShinyA = typeof a === 'object' ? a.s : (String(a).includes('✨') ? 1 : 0);
+            const isShinyB = typeof b === 'object' ? b.s : (String(b).includes('✨') ? 1 : 0);
+            return isShinyB - isShinyA; // Shinies at top
         });
     }
+    // "oldest" stays as-is (natural KV order)
 
-    renderSprites(sorted); // Note: renderSprites reverses the array for display
+    renderSprites(sorted);
 });
 
 // --- 6. INITIAL LOAD ---
