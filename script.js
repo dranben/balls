@@ -172,6 +172,6 @@ document.getElementById('sort-order').addEventListener('change', (e) => {
 // --- 7. INITIAL LOAD ---
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const user = urlParams.get('user') || 'Branden';
+    const user = urlParams.get('user') || 'dranben';
     fetchTrainerData(user);
 };
