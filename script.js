@@ -119,5 +119,44 @@ async function loadShinyLeaderboard() {
     }
 }
 
+// --- TAB LOGIC ---
+function openTab(tabId) {
+    // 1. Remove 'active' class from all tabs and buttons
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+    // 2. Add 'active' class to the clicked tab and button
+    document.getElementById(tabId).classList.add('active');
+    
+    // Find the button that was clicked and highlight it
+    event.currentTarget.classList.add('active');
+
+    // 3. If opening leaderboard, refresh the data
+    if (tabId === 'leaderboard-view') {
+        loadShinyLeaderboard();
+    }
+}
+
+// --- LEADERBOARD FETCH ---
+async function loadShinyLeaderboard() {
+    const listEl = document.getElementById('leaderboard-list');
+    listEl.innerHTML = '<div class="leader-row">LOADING STATS...</div>';
+
+    try {
+        const response = await fetch(`${WORKER_URL}?leaderboard=true&format=json`);
+        const stats = await response.json();
+
+        listEl.innerHTML = `
+            <div class="leader-row"><span>SHINIES</span> <span class="leader-count">${stats.shinies}</span></div>
+            <div class="leader-row"><span>LEGENDS</span> <span class="leader-count">${stats.legends}</span></div>
+            <div class="leader-row"><span>HUNDOS</span> <span class="leader-count">${stats.hundos}</span></div>
+            <div class="leader-row"><span>NUNDOS</span> <span class="leader-count">${stats.nundos || 0}</span></div>
+            <div class="leader-row"><span>SHUNDOS</span> <span class="leader-count">${stats.shundos}</span></div>
+        `;
+    } catch (e) {
+        listEl.innerHTML = '<div class="leader-row">ERROR LOADING</div>';
+    }
+}
+
 // Run this on page load
 loadShinyLeaderboard();
