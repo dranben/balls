@@ -2,24 +2,29 @@ const WORKER_URL = "https://pokemon.brandenkenn.workers.dev";
 let fullCollection = [];
 let leaderboardData = null;
 
-// --- NAVIGATION ---
+// --- TAB NAVIGATION ---
 function openTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
     document.getElementById(tabId).classList.add('active');
     btn.classList.add('active');
+
     if (tabId === 'leaderboard-view') loadShinyLeaderboard();
 }
 
 function switchLeaderboard(cat, btn) {
     document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    
     const listEl = document.getElementById('leaderboard-list');
     listEl.innerHTML = "";
 
+    if (!leaderboardData) return;
+
     if (cat === 'global') {
         const g = leaderboardData.global;
-        const rows = [["SHINIES", g.shinies], ["LEGENDS", g.legends], ["HUNDOS", g.hundos], ["NUNDOS", g.nundos], ["SHUNDOS", g.shundos]];
+        const rows = [["SHINIES", g.shinies], ["LEGENDARIES", g.Legendaries], ["HUNDOS", g.hundos], ["NUNDOS", g.nundos], ["SHUNDOS", g.shundos]];
         rows.forEach(r => { listEl.innerHTML += `<div class="leader-row"><span>${r[0]}</span><span class="rank-count">${r[1] || 0}</span></div>`; });
     } else {
         const list = leaderboardData.topLists[cat] || [];
@@ -30,16 +35,18 @@ function switchLeaderboard(cat, btn) {
     }
 }
 
-// --- DATA ---
+// --- DATA FETCHING ---
 async function fetchTrainerData(user) {
     const nameEl = document.getElementById('trainer-name');
     nameEl.innerText = "LOADING...";
     try {
         const res = await fetch(`${WORKER_URL}?user=${encodeURIComponent(user)}&userstats=true&format=json`);
         const data = await res.json();
+        
         nameEl.innerText = user.toUpperCase();
         document.getElementById('trainer-balance').innerText = `₽${(data.balance || 0).toLocaleString()}`;
         document.getElementById('trainer-total').innerText = data.total || 0;
+        
         fullCollection = data.collection || [];
         renderSprites(fullCollection);
     } catch (e) { nameEl.innerText = "ERROR"; }
@@ -70,7 +77,7 @@ async function loadShinyLeaderboard() {
     } catch (e) { listEl.innerHTML = "Offline"; }
 }
 
-// --- LISTENERS ---
+// --- EVENT LISTENERS ---
 document.getElementById('search-btn').addEventListener('click', () => {
     const v = document.getElementById('username-input').value.trim();
     if (v) fetchTrainerData(v);
@@ -85,7 +92,7 @@ document.getElementById('sort-order').addEventListener('change', (e) => {
     let s = [...fullCollection];
     if (e.target.value === "alpha") s.sort((a,b) => a.localeCompare(b));
     else if (e.target.value === "shiny") s.sort((a,b) => b.includes('✨') - a.includes('✨'));
-    renderSprites(s); // renderSprites handles reverse
+    renderSprites(s);
 });
 
 window.onload = () => fetchTrainerData(new URLSearchParams(window.location.search).get('user') || 'dranben');
