@@ -1,168 +1,104 @@
-/* --- 1. FONTS & RESET --- */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap');
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
-    background-color: #f4f4f4;
+    background-color: #f0f0f0;
     font-family: 'Roboto', sans-serif;
     display: flex;
     justify-content: center;
     padding: 20px;
     margin: 0;
-    min-height: 100vh;
 }
 
-/* --- 2. POKEDEX CONTAINER --- */
 #trainer-card {
-    background-color: #e3350d; /* Pokédex Red */
+    background-color: #e3350d;
     width: 100%;
     max-width: 450px;
     border-radius: 20px;
     border: 8px solid #a12308;
-    box-shadow: 12px 12px 0px rgba(0,0,0,0.15);
+    box-shadow: 12px 12px 0px rgba(0,0,0,0.1);
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
-/* --- 3. SEARCH BAR --- */
-.search-bar {
+/* Search & Controls */
+.search-bar, .controls-row {
     display: flex;
     gap: 8px;
-    background: #a12308;
-    padding: 10px;
-    border-radius: 10px;
 }
 
-#username-input {
+#username-input, #pokemon-filter {
     flex-grow: 1;
-    padding: 8px 12px;
+    padding: 10px;
     border-radius: 5px;
-    border: none;
-    font-family: 'Roboto', sans-serif;
-    outline: none;
+    border: 2px solid #313131;
 }
 
-#search-btn {
-    background-color: #313131;
+#search-btn, #sort-order {
+    background: #313131;
     color: #51ff00;
     border: none;
-    padding: 8px 12px;
     border-radius: 5px;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     cursor: pointer;
-    border-bottom: 3px solid #000;
 }
 
-#search-btn:active {
-    border-bottom: 0;
-    transform: translateY(2px);
-}
-
-/* --- 4. TRAINER NAME DISPLAY --- */
+/* Green Screen */
 #trainer-name {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1.1rem;
-    text-align: center;
     background: #313131;
-    padding: 18px 10px;
-    border-radius: 10px;
-    border: 4px solid #111;
-    margin: 0;
-    text-transform: uppercase;
-    color: #51ff00; /* Neon Green Terminal */
-    letter-spacing: 1px;
-}
-
-/* --- 5. STATS ROW --- */
-.stats-container {
-    display: flex;
-    justify-content: space-around;
-    background: #ffffff;
-    color: #313131;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    border: 3px solid #ccc;
-    font-size: 0.9rem;
-}
-
-.stats-container span {
-    color: #e3350d;
-}
-
-/* --- 6. POKEMON DISPLAY GRID --- */
-h3 {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.65rem;
-    color: white;
-    margin: 5px 0;
-    text-shadow: 2px 2px #a12308;
-}
-
-#pokemon-display {
-    background: #313131;
+    color: #51ff00;
     padding: 15px;
     border-radius: 10px;
     border: 4px solid #111;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Stats */
+.stats-container {
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    border-radius: 8px;
+    border: 3px solid #ccc;
+    font-weight: bold;
+}
+
+/* The Grid */
+#pokemon-display {
+    background: #222;
+    border: 4px solid #111;
+    border-radius: 10px;
+    padding: 15px;
     display: grid;
-    /* repeat(auto-fill) handles the wrapping, minmax prevents overlap */
-    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-    gap: 12px;
-    min-height: 250px;
-    justify-items: center;
-    align-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 10px;
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto; /* Scrollable collection */
 }
 
-/* --- 7. POKEMON SPRITES --- */
 #pokemon-display img {
-    background: #444;
+    width: 100%;
+    background: #333;
     border-radius: 50%;
-    padding: 8px;
-    width: 100%; /* Keeps sprite inside its grid cell */
-    height: auto;
-    aspect-ratio: 1/1;
-    object-fit: contain;
-    transition: transform 0.2s ease, background 0.2s ease;
-    border: 2px solid #555;
-}
-
-#pokemon-display img:hover {
-    transform: scale(1.15) rotate(5deg);
-    background: #555;
+    padding: 5px;
+    border: 2px solid #444;
     cursor: help;
+    transition: transform 0.2s;
 }
 
-/* --- 8. SPECIAL EFFECTS --- */
-.shiny-glow {
-    filter: drop-shadow(0 0 8px gold) !important;
-    border: 2px solid gold !important;
-}
+#pokemon-display img:hover { transform: scale(1.2); z-index: 5; }
 
-.pokerus-border {
-    border: 3px solid #ff00ff !important;
-    box-shadow: inset 0 0 10px #ff00ff;
-}
+/* Special Glows */
+.shiny-glow { filter: drop-shadow(0 0 5px gold); border: 2px solid gold !important; }
+.pokerus-border { border: 2px solid #ff00ff !important; }
 
-/* Mobile Tweak: Ensure 3 columns on very small screens */
-@media (max-width: 380px) {
-    #pokemon-display {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Update the hover effect in style.css */
-.poke-sprite {
-    cursor: help; /* Changes cursor to a '?' on hover */
-    transition: transform 0.2s ease-in-out;
-}
-
-.poke-sprite:hover {
-    transform: scale(1.2) rotate(3deg);
-    z-index: 10; /* Ensures the hovered sprite stays on top of others */
-}
+h3 { color: white; font-family: 'Press Start 2P', cursive; font-size: 0.6rem; margin: 0; }
