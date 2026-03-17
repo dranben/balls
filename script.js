@@ -87,3 +87,37 @@ document.getElementById('sort-order').addEventListener('change', (e) => {
 // Initial Load
 const urlParams = new URLSearchParams(window.location.search);
 fetchTrainerData(urlParams.get('user') || 'dranben');
+
+async function loadShinyLeaderboard() {
+    const listEl = document.getElementById('leaderboard-list');
+    
+    try {
+        // We use the 'leaderboard=true' flag we built into your worker
+        const response = await fetch(`${WORKER_URL}?leaderboard=true&format=json`);
+        const stats = await response.json();
+
+        listEl.innerHTML = `
+            <div class="leader-row">
+                <span>TOTAL SHINIES</span>
+                <span class="leader-count">${stats.shinies}</span>
+            </div>
+            <div class="leader-row">
+                <span>GLOBAL HUNDOS</span>
+                <span class="leader-count">${stats.hundos}</span>
+            </div>
+            <div class="leader-row">
+                <span>SHUNDOS FOUND</span>
+                <span class="leader-count">${stats.shundos}</span>
+            </div>
+            <div class="leader-row">
+                <span>LEGENDARIES</span>
+                <span class="leader-count">${stats.legends}</span>
+            </div>
+        `;
+    } catch (e) {
+        listEl.innerHTML = "Offline";
+    }
+}
+
+// Run this on page load
+loadShinyLeaderboard();
