@@ -1,6 +1,6 @@
 // --- 1. CONFIGURATION ---
 const WORKER_URL = "https://pokemon.brandenkenn.workers.dev";
-const CLIENT_ID = "YOUR_TWITCH_CLIENT_ID_HERE"; // Replace with your Twitch Client ID
+const CLIENT_ID = "oqdrp3gkw3lczkb14z6h74ycboupib"; // Replace with your Twitch Client ID
 const REDIRECT_URI = "https://dranben.com";
 
 let fullCollection = [];
