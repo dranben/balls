@@ -88,13 +88,6 @@ document.getElementById('pokemon-filter').addEventListener('input', (e) => {
     renderSprites(fullCollection.filter(i => i.toLowerCase().includes(term)));
 });
 
-document.getElementById('sort-order').addEventListener('change', (e) => {
-    let s = [...fullCollection];
-    if (e.target.value === "alpha") s.sort((a,b) => a.localeCompare(b));
-    else if (e.target.value === "shiny") s.sort((a,b) => b.includes('✨') - a.includes('✨'));
-    renderSprites(s);
-});
-
 // Helper to get Pokedex ID from name (Simplified for common catches)
 // If the ID isn't found, it defaults to 9999 so it goes to the end of the list.
 async function getPokeId(name) {
@@ -106,5 +99,46 @@ async function getPokeId(name) {
         return 9999; 
     }
 }
+
+document.getElementById('sort-order').addEventListener('change', async (e) => {
+    const val = e.target.value;
+    let sorted = [...fullCollection];
+
+    if (val === "oldest") {
+        renderSprites(sorted); // Original order from KV is oldest first
+        return;
+    }
+
+    if (val === "alpha") {
+        sorted.sort((a, b) => a.localeCompare(b));
+    } else if (val === "shiny") {
+        sorted.sort((a, b) => b.includes('✨') - a.includes('✨'));
+    } else if (val === "pokedex") {
+        // Pokedex sort requires a bit more heavy lifting
+        document.getElementById('trainer-name').innerText = "SORTING...";
+        
+        // Create a map of names to IDs to avoid duplicate API calls
+        const nameToId = {};
+        for (let entry of sorted) {
+            const name = entry.split('(')[0].replace('✨', '').toLowerCase().trim();
+            if (!nameToId[name]) {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+                const d = await res.json();
+                nameToId[name] = d.id;
+            }
+        }
+        
+        sorted.sort((a, b) => {
+            const nameA = a.split('(')[0].replace('✨', '').toLowerCase().trim();
+            const nameB = b.split('(')[0].replace('✨', '').toLowerCase().trim();
+            return nameToId[nameA] - nameToId[nameB];
+        });
+        
+        document.getElementById('trainer-name').innerText = "DRANBEN"; // Reset title
+    }
+
+    // Newest is the default (reversed array)
+    renderSprites(sorted); 
+});
 
 window.onload = () => fetchTrainerData(new URLSearchParams(window.location.search).get('user') || 'dranben');
