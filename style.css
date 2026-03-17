@@ -88,3 +88,57 @@ body {
 }
 .rank-count { color: #51ff00; }
 .terminal-header { color: #51ff00; text-align: center; font-size: 0.8rem; font-family: 'Press Start 2P', cursive; }
+
+/* --- TACTILE POKEDEX SEARCH & FILTER STYLES --- */
+
+.search-bar, .controls-row {
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.15); /* Sunken panel effect */
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #a12308;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3);
+    margin-bottom: 5px;
+}
+
+/* User & Pokemon Input Fields */
+#username-input, #pokemon-filter {
+    flex-grow: 1;
+    background: #e0e0e0;
+    border: 3px solid #313131;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    color: #222;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Neon Green Focus Glow */
+#username-input:focus, #pokemon-filter:focus {
+    background: #ffffff;
+    border-color: #51ff00; 
+    box-shadow: 0 0 10px rgba(81, 255, 0, 0.5);
+}
+
+/* Go Button Styling */
+#search-btn {
+    background: #313131;
+    color: #51ff00;
+    border: none;
+    border-radius: 6px;
+    padding: 0 15px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-bottom: 4px solid #000;
+    transition: all 0.1s;
+}
+
+#search-btn:hover {
+    background: #444;
+    color: #
