@@ -164,3 +164,35 @@ h3 { color: white; font-family: 'Press Start 2P', cursive; font-size: 0.6rem; ma
     border-bottom-width: 0;
     transform: translateY(4px); /* Button press feel */
 }
+
+#leaderboard-card {
+    background-color: #313131;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 15px;
+    border: 6px solid #111;
+    padding: 20px;
+    margin-top: 20px;
+    color: #51ff00;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.terminal-header {
+    font-size: 0.8rem;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #51ff00;
+    padding-bottom: 10px;
+}
+
+.leader-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    padding: 10px 0;
+    border-bottom: 1px solid #444;
+}
+
+.leader-rank { color: gold; }
+.leader-name { color: white; }
+.leader-count { color: #51ff00; }
