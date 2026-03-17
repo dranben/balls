@@ -162,16 +162,18 @@ function renderSprites(list) {
 }
 
 async function releasePokemon(index, name) {
-    if (!confirm(`Are you sure you want to release your ${name}? This cannot be undone.`)) return;
+    if (!confirm(`Release ${name}?`)) return;
 
     const token = localStorage.getItem('auth_token');
     const user = localStorage.getItem('twitch_user');
-
+    
     const res = await fetch(`${WORKER_URL}?user=${user}&release_index=${index}&token=${token}`);
-    const result = await res.text();
+    const message = await res.text();
 
-    alert(result);
-    fetchTrainerData(user); // Refresh the display
+    alert(message);
+    
+    // This line is key! It re-runs the fetch to show the updated list
+    fetchTrainerData(user); 
 }
 
 async function loadShinyLeaderboard() {
