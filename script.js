@@ -95,4 +95,16 @@ document.getElementById('sort-order').addEventListener('change', (e) => {
     renderSprites(s);
 });
 
+// Helper to get Pokedex ID from name (Simplified for common catches)
+// If the ID isn't found, it defaults to 9999 so it goes to the end of the list.
+async function getPokeId(name) {
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+        const data = await response.json();
+        return data.id;
+    } catch (e) {
+        return 9999; 
+    }
+}
+
 window.onload = () => fetchTrainerData(new URLSearchParams(window.location.search).get('user') || 'dranben');
