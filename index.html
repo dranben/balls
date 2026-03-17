@@ -1,24 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dranben's Trainer Card</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
-
 <body>
-<div id="trainer-card">
-    <div class="search-bar">
-        <input type="text" id="username-input" placeholder="Enter Trainer Name...">
-        <button id="search-btn">SEARCH</button>
+
+    <div id="trainer-card">
+        <div class="search-bar">
+            <input type="text" id="username-input" placeholder="Trainer Name...">
+            <button id="search-btn">GO</button>
+        </div>
+
+        <h2 id="trainer-name">LOADING...</h2>
+        
+        <div class="stats-container">
+            <div>Cash: <span id="trainer-balance">₽0</span></div>
+            <div>Total: <span id="trainer-total">0</span></div>
+        </div>
+
+        <div class="controls-row">
+            <input type="text" id="pokemon-filter" placeholder="Filter (✨, hundo, name...)">
+            <select id="sort-order">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="alpha">A-Z</option>
+                <option value="shiny">Shinies</option>
+            </select>
+        </div>
+
+        <h3>COLLECTION</h3>
+        <div id="pokemon-display"></div>
     </div>
 
-    <h2 id="trainer-name">Search a Trainer</h2>
-    
-    <div class="stats-container">
-        <div>Cash: <span id="trainer-balance">₽0</span></div>
-        <div>Catches: <span id="trainer-total">0</span></div>
-    </div>
-    
-    <h3>RECENT CATCHES</h3>
-    <div id="pokemon-display">
-        </div>
-</div>
 </body>
+</html>
