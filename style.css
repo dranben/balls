@@ -24,8 +24,9 @@ body {
     gap: 12px;
 }
 
-/* Tabs */
+/* Tabs Navigation */
 .pokedex-tabs, .sub-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+
 .tab-btn, .sub-btn {
     flex: 1;
     background: #313131;
@@ -37,35 +38,27 @@ body {
     cursor: pointer;
     border-radius: 5px;
 }
-.tab-btn.active, .sub-btn.active { background: #51ff00; color: #313131; box-shadow: 0 0 10px #51ff00; }
+
+.tab-btn.active, .sub-btn.active {
+    background: #51ff00;
+    color: #313131;
+    box-shadow: 0 0 10px #51ff00;
+}
+
 .sub-btn { font-size: 0.45rem; padding: 8px 0; background: #444; }
 
-/* Search & Inputs */
-.search-bar, .controls-row { display: flex; gap: 8px; }
-#username-input, #pokemon-filter {
-    flex-grow: 1;
-    padding: 10px;
-    border: 3px solid #313131;
-    border-radius: 6px;
-    outline: none;
+/* Tab Content Visibility - THIS FIXES THE OVERLAP */
+.tab-content {
+    display: none; 
+    flex-direction: column;
+    gap: 12px;
 }
-#username-input:focus, #pokemon-filter:focus { border-color: #51ff00; }
 
-#search-btn {
-    background: #313131;
-    color: #51ff00;
-    border: none;
-    padding: 0 15px;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.7rem;
-    border-bottom: 4px solid #000;
-    cursor: pointer;
+.tab-content.active {
+    display: flex; 
 }
-#search-btn:active { transform: translateY(2px); border-bottom: 0; }
 
-#sort-order { background: #313131; color: white; border-radius: 5px; padding: 5px; }
-
-/* Displays */
+/* UI Elements */
 #trainer-name {
     background: #313131; color: #51ff00; padding: 15px; border-radius: 10px;
     text-align: center; font-family: 'Press Start 2P', cursive; margin: 0; border: 4px solid #111;
@@ -78,7 +71,7 @@ body {
 
 #pokemon-display, #leaderboard-list {
     background: #222; border: 4px solid #111; border-radius: 10px; padding: 15px;
-    min-height: 350px; max-height: 500px; overflow-y: auto;
+    min-height: 380px; max-height: 550px; overflow-y: auto;
 }
 
 #pokemon-display { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
@@ -87,9 +80,8 @@ body {
 #pokemon-display img:hover { transform: scale(1.1); }
 
 .shiny-glow { filter: drop-shadow(0 0 5px gold); border: 2px solid gold !important; }
-.pokerus-border { border: 2px solid #ff00ff !important; }
 
-/* Leaderboard Rows */
+/* Hall of Fame Rows */
 .leader-row {
     display: flex; justify-content: space-between; padding: 12px 5px;
     border-bottom: 1px solid #333; color: white; font-family: 'Press Start 2P', cursive; font-size: 0.55rem;
