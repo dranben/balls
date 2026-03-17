@@ -117,21 +117,28 @@ function renderSprites(list) {
     const display = document.getElementById('pokemon-display');
     display.innerHTML = "";
 
-    // Default: Show newest at the top
-    [...list].reverse().forEach(entry => {
-        if (!entry) return;
+    // 1. Filter out any null or undefined entries first
+    const cleanList = list.filter(entry => entry !== null && entry !== undefined);
 
+    [...cleanList].reverse().forEach(entry => {
         let name, isShiny, title;
 
-        // Handle Object vs Legacy String
-        if (typeof entry === 'object') {
+        // 2. NEW OBJECT CHECK
+        if (typeof entry === 'object' && entry.n) {
             name = entry.n.toLowerCase();
             isShiny = entry.s === 1;
-            title = `${isShiny ? '✨' : ''}${entry.n} (${entry.iv.join('/')})`;
-        } else {
+            // Handle IV array safety
+            const ivs = entry.iv ? entry.iv.join('/') : '??/??/??';
+            title = `${isShiny ? '✨' : ''}${entry.n} (${ivs})`;
+        } 
+        // 3. LEGACY STRING CHECK
+        else if (typeof entry === 'string') {
             isShiny = entry.includes('✨');
             name = entry.split('(')[0].replace('✨', '').toLowerCase().trim();
             title = entry;
+        } 
+        else {
+            return; // Skip if it's neither
         }
 
         const img = document.createElement('img');
