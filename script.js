@@ -345,6 +345,11 @@ function showSuccessModal(message) {
 async function openDetailModal(poke) {
     const m = document.getElementById('detail-modal'), i = document.getElementById('detail-card-inner');
     const isShiny = poke.s === 1;
+    if (isShiny) {
+        innerCard.classList.add('is-shiny');
+    } else {
+        innerCard.classList.remove('is-shiny');
+    }
     document.getElementById('detail-name').innerText = poke.n.toUpperCase() + (isShiny ? " ✨" : "");
     document.getElementById('detail-img').src = `https://img.pokemondb.net/sprites/home/${isShiny ? 'shiny' : 'normal'}/${poke.n.toLowerCase()}.png`;
     const [a, d, h] = poke.iv || [0,0,0];
