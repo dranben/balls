@@ -333,17 +333,36 @@ header {
     gap: 20px;
 }
 
-/* Add a star to the card for the main grid so you can click to favorite */
+/* The Star Button Base Styling */
 .fav-btn {
     position: absolute;
     bottom: 8px;
     right: 8px;
     background: none;
     border: none;
-    color: #444;
-    font-size: 1.2rem;
+    color: #444; /* Dark grey by default */
+    font-size: 1.8rem; /* INCREASED SIZE (was 1.2rem) */
     cursor: pointer;
-    display: none; /* Only owner can see */
+    display: none; 
+    z-index: 10;
+    transition: all 0.2s ease; /* Smooth scaling */
+}
+
+/* Hover effect */
+.fav-btn:hover {
+    color: #ffd700;
+    transform: scale(1.2);
+}
+
+/* NEW: The Active (Favorited) State */
+.fav-btn.active {
+    color: #ffd700; /* Solid Yellow */
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); /* Golden glow */
+}
+
+/* ONLY display the button if the user is the owner */
+.is-owner .fav-btn { 
+    display: block; 
 }
 
 .is-owner .fav-btn { display: block; }
