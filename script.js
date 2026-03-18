@@ -483,8 +483,19 @@ function customPromptSlot() {
 async function openDetailModal(pokeData) {
     const modal = document.getElementById('detail-modal');
     const innerCard = document.getElementById('detail-card-inner');
-    
-    // 1. Populate the basic stats immediately
+    const dexElement = document.getElementById('detail-dex-entry');
+    const typesContainer = document.getElementById('detail-types'); // Added this missing line!
+    const closeBtn = document.getElementById('close-detail');
+
+    // 1. SETUP CLOSING LOGIC FIRST (So the X always works)
+    const close = () => {
+        innerCard.classList.remove('show');
+        setTimeout(() => modal.classList.add('hidden'), 400);
+    };
+    closeBtn.onclick = close;
+    modal.onclick = (e) => { if (e.target === modal) close(); };
+
+    // 2. POPULATE BASIC DATA
     const isShiny = pokeData.s === 1;
     document.getElementById('detail-name').innerText = pokeData.n.toUpperCase() + (isShiny ? " ✨" : "");
     document.getElementById('detail-img').src = `https://img.pokemondb.net/sprites/home/${isShiny ? 'shiny' : 'normal'}/${pokeData.n.toLowerCase()}.png`;
@@ -497,14 +508,14 @@ async function openDetailModal(pokeData) {
     document.getElementById('detail-hp').innerText = hp;
     document.getElementById('detail-hp').className = `stat-value ${hp === 15 ? 'perfect-stat' : ''}`;
     
-    const dexElement = document.getElementById('detail-dex-entry');
     dexElement.innerText = "Accessing global Pokédex...";
+    typesContainer.innerHTML = ""; // Clear old types
 
-    // 2. Show the modal, then trigger the CSS flip animation
+    // 3. TRIGGER ANIMATION
     modal.classList.remove('hidden');
     setTimeout(() => innerCard.classList.add('show'), 10);
 
-    // 3. ---> NEW: Fetch BOTH endpoints at the exact same time <---
+    // 4. FETCH API DATA
     try {
         const query = pokeData.id ? pokeData.id : pokeData.n.toLowerCase();
         
@@ -534,15 +545,8 @@ async function openDetailModal(pokeData) {
             dexElement.innerText = "Data corrupted. No Pokédex entry found.";
         }
     } catch (e) {
+        console.error("Dex Fetch Error:", e);
         dexElement.innerText = "Connection lost. Could not load Pokédex entry.";
-        typesContainer.innerHTML = `<span class="type-bubble" style="background:#ff3333">ERROR</span>`;
+        if (typesContainer) typesContainer.innerHTML = `<span class="type-bubble" style="background:#ff3333">ERROR</span>`;
     }
-    // 4. Handle Closing the Modal (with reverse animation)
-    const close = () => {
-        innerCard.classList.remove('show'); // Flips it away
-        setTimeout(() => modal.classList.add('hidden'), 400); // Hides the background after flip
-    };
-
-    document.getElementById('close-detail').onclick = close;
-    modal.onclick = (e) => { if (e.target === modal) close(); }; // Close if clicking the dark background
 }
