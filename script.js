@@ -22,6 +22,13 @@ window.onload = async () => {
         inputField.value = urlUser || loggedInUser || "";
     }
 
+    // NEW: Load saved sort preference
+    const savedSort = localStorage.getItem('preferred_sort') || 'newest';
+    const sortDropdown = document.getElementById('sort-order');
+    if (sortDropdown) {
+        sortDropdown.value = savedSort;
+    }
+
     // 4. Load the actual Pokemon
     fetchTrainerData(userToLoad);
 };
@@ -88,15 +95,18 @@ async function fetchTrainerData(username) {
         if (statTotal) statTotal.innerText = data.total || 0;
         if (statBalance) statBalance.innerText = data.balance?.toLocaleString() || 0;
 
+        // 1. Load the master list
         fullCollection = (data.collection || []).filter(Boolean);
+        
+        // 2. Update Favorites (now that collection is in memory)
         updateFavoriteUI(data.favorites);
+
+        // 3. Handle the Sorting & Initial Draw
+        const sortOrder = document.getElementById('sort-order');
+        const currentSort = sortOrder ? sortOrder.value : 'newest';
         
-        // Use mapping to preserve original index before reversing
-        const displayList = fullCollection.map((poke, index) => {
-            return { ...poke, originalIndex: index };
-        }).reverse();
-        
-        renderSprites(displayList);
+        // This function handles both the mapping and the final renderSprites call!
+        applySortAndRender(currentSort);
         
     } catch (e) {
         if (display) display.innerHTML = "<p>Error: Storage unit is offline.</p>";
@@ -296,21 +306,30 @@ async function toggleFavoriteDialog(index) {
         updateFavorite(slotNum - 1, index);
     }
 }
+// --- 6.1 DATABASE ACTION: UPDATE FAVORITE ---
 async function updateFavorite(slot, pokeIndex) {
     const user = localStorage.getItem('twitch_user');
     const token = localStorage.getItem('auth_token');
     
     // --- 1. OPTIMISTIC UI UPDATE ---
+    // Get the specific Pokemon from our local memory
     const targetPoke = fullCollection[pokeIndex];
 
     if (slot === -1) {
-        delete targetPoke.fav; // Remove favorite
+        // UNFAVORITE: Just remove the tag
+        delete targetPoke.fav; 
     } else {
-        // Strip this slot from anyone else, then assign it
-        fullCollection.forEach(p => { if (p.fav === slot) delete p.fav; });
+        // FAVORITE: 
+        // A. Strip this specific slot (0-3) from any other Pokemon that has it
+        fullCollection.forEach(p => { 
+            if (p.fav === slot) delete p.fav; 
+        });
+        // B. Assign the tag to our target Pokemon
         targetPoke.fav = slot;
     }
 
+    // --- 2. RE-DRAW THE UI INSTANTLY ---
+    // Build a temporary Top 4 array for the header
     const tempFavorites = [null, null, null, null];
     fullCollection.forEach(p => {
         if (p.fav !== undefined && p.fav >= 0 && p.fav <= 3) {
@@ -318,43 +337,28 @@ async function updateFavorite(slot, pokeIndex) {
         }
     });
     
-    // Instantly Redraw the Top Bar
+    // Update the top 4 bar
     updateFavoriteUI(tempFavorites);
 
-    // ---> NEW: Instantly Redraw the Main Grid <---
-    // We grab the current search term and sort order so the grid doesn't reset wildly
-    const filterInput = document.getElementById('pokemon-filter');
-    const term = filterInput ? filterInput.value.toLowerCase() : "";
-    
-    let displayList = fullCollection.map((poke, idx) => ({ ...poke, originalIndex: idx }));
-    
-    if (term) {
-        displayList = displayList.filter(i => {
-            const name = typeof i === 'object' ? i.n : i;
-            return name.toLowerCase().includes(term);
-        });
-    }
-    
+    // Update the main grid (handles the yellow stars and current sort)
     const sortOrder = document.getElementById('sort-order');
-    const val = sortOrder ? sortOrder.value : "newest";
-    
-    if (val === "newest") {
-        displayList.reverse();
-    } else if (val === "pokedex") {
-        displayList.sort((a, b) => (a.id || 0) - (b.id || 0));
-    } else if (val === "alpha") {
-        displayList.sort((a, b) => {
-            const nameA = typeof a === 'object' ? a.n : a;
-            const nameB = typeof b === 'object' ? b.n : b;
-            return nameA.localeCompare(nameB);
-        });
-    } else if (val === "shiny") {
-        displayList.sort((a, b) => {
-            const sA = typeof a === 'object' ? a.s : (a.includes('✨') ? 1 : 0);
-            const sB = typeof b === 'object' ? b.s : (b.includes('✨') ? 1 : 0);
-            return sB - sA;
-        });
+    const currentSort = sortOrder ? sortOrder.value : "newest";
+    applySortAndRender(currentSort); 
+
+    // --- 3. BACKGROUND DATABASE SAVE ---
+    try {
+        const res = await fetch(`${WORKER_URL}?user=${user}&set_favorite=true&slot=${slot}&index=${pokeIndex}&token=${token}`);
+        
+        if (!res.ok) {
+            console.error("Server rejected favorite save. Reverting UI...");
+            // If the server fails (e.g., token expired), we force a full refresh to fix the UI
+            fetchTrainerData(user); 
+        }
+    } catch (e) {
+        console.error("Network error while saving favorite:", e);
+        // Optional: notify user that save failed
     }
+}
     
     renderSprites(displayList); // Re-draws the grid with updated yellow stars
 
@@ -389,35 +393,35 @@ if (filterInput) {
     });
 }
 
-const sortOrder = document.getElementById('sort-order');
 if (sortOrder) {
     sortOrder.addEventListener('change', (e) => {
         const val = e.target.value;
-        
-        // Map array with original indexes before sorting
-        let sorted = fullCollection.map((poke, index) => {
-             return { ...poke, originalIndex: index };
-        });
-
-        if (val === "newest") {
-            sorted.reverse();
-        } else if (val === "pokedex") {
-            sorted.sort((a, b) => (a.id || 0) - (b.id || 0));
-        } else if (val === "alpha") {
-            sorted.sort((a, b) => {
-                const nameA = typeof a === 'object' ? a.n : a;
-                const nameB = typeof b === 'object' ? b.n : b;
-                return nameA.localeCompare(nameB);
-            });
-        } else if (val === "shiny") {
-            sorted.sort((a, b) => {
-                const sA = typeof a === 'object' ? a.s : (a.includes('✨') ? 1 : 0);
-                const sB = typeof b === 'object' ? b.s : (b.includes('✨') ? 1 : 0);
-                return sB - sA;
-            });
-        }
-        renderSprites(sorted);
+        // Save the choice!
+        localStorage.setItem('preferred_sort', val);
+        applySortAndRender(val);
     });
+}
+
+function applySortAndRender(val) {
+    // Map array with original indexes so Favorite/Release buttons still work
+    let displayList = fullCollection.map((poke, index) => {
+         return { ...poke, originalIndex: index };
+    });
+
+    if (val === "newest") {
+        displayList.reverse();
+    } else if (val === "pokedex") {
+        displayList.sort((a, b) => (a.id || 0) - (b.id || 0));
+    } else if (val === "alpha") {
+        displayList.sort((a, b) => {
+            const nameA = (a.n || "").toLowerCase();
+            const nameB = (b.n || "").toLowerCase();
+            return nameA.localeCompare(nameB);});
+    } else if (val === "shiny") {
+        displayList.sort((a, b) => b.s - a.s);
+    }
+    
+    renderSprites(displayList);
 }
 
 // --- CUSTOM MODAL ENGINE ---
