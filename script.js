@@ -230,3 +230,22 @@ document.getElementById('sort-order').addEventListener('change', (e) => {
     // "oldest" is the default array order
     renderSprites(sorted);
 });
+
+// --- 7. WEBSITE DATA (JSON) ---
+    if (searchParams.get('userstats') === 'true') {
+      // Create a temporary clone to send to the frontend
+      const frontendData = { ...userData, favorites: [null, null, null, null] };
+      
+      // Look for any Pokémon with a 'fav' tag and slot them into the array
+      if (frontendData.collection) {
+          frontendData.collection.forEach(p => {
+              if (p.fav !== undefined && p.fav >= 0 && p.fav <= 3) {
+                  frontendData.favorites[p.fav] = p;
+              }
+          });
+      }
+    
+      return new Response(JSON.stringify(frontendData), { 
+        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+      });
+    }
