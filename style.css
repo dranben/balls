@@ -336,7 +336,7 @@ header {
 /* The Star Button Base Styling */
 .fav-btn {
     position: absolute;
-    top: 1px;      /* Moved from bottom to top */
+    top: -8px;      /* Moved from bottom to top */
     left: 8px;     /* Moved from right to left */
     background: none;
     border: none;
