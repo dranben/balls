@@ -80,13 +80,16 @@ async function fetchTrainerData(username) {
         const res = await fetch(`${WORKER_URL}?user=${username}&userstats=true`);
         const data = await res.json();
         
-        // Filter out nulls and store the clean list globally
-        fullCollection = (data.collection || []).filter(Boolean);
+        // 1. UPDATE THE TOP STATS
+        statTotal.innerText = data.total || 0;
+        statBalance.innerText = data.balance?.toLocaleString() || 0; // .toLocaleString adds commas to big numbers
         
-        // Show newest catches first by default
+        // 2. PROCESS COLLECTION
+        fullCollection = (data.collection || []).filter(Boolean);
         renderSprites([...fullCollection].reverse());
+        
     } catch (e) {
-        display.innerHTML = "<p>Error: Storage unit is offline or trainer not found.</p>";
+        display.innerHTML = "<p>Error: Storage unit is offline.</p>";
     }
 }
 
