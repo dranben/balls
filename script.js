@@ -19,7 +19,6 @@ window.onload = async () => {
         inputField.value = urlUser || loggedInUser || "";
     }
 
-    // Load saved sort preference
     const savedSort = localStorage.getItem('preferred_sort') || 'newest';
     const sortDropdown = document.getElementById('sort-order');
     if (sortDropdown) {
@@ -149,10 +148,10 @@ function renderSprites(list) {
 
     list.forEach((item) => {
         const actualIndex = item.originalIndex !== undefined ? item.originalIndex : fullCollection.indexOf(item);
-        let name, isShiny, atk, def, hp, hasPokerus;
+        let name, isShiny, atk, def, hp;
 
         if (typeof item === 'object' && item.n) {
-            name = item.n; isShiny = item.s === 1; hasPokerus = item.p === 1; [atk, def, hp] = item.iv || [0, 0, 0];
+            name = item.n; isShiny = item.s === 1; [atk, def, hp] = item.iv || [0, 0, 0];
         } else {
             isShiny = item.includes('✨'); name = item.split('(')[0].replace('✨', '').trim();
             const ivMatch = item.match(/\((.*?)\)/); [atk, def, hp] = ivMatch ? ivMatch[1].split('/').map(Number) : [0, 0, 0];
@@ -183,14 +182,18 @@ async function releasePokemon(index, name) {
     if (!isSure) return;
     const token = localStorage.getItem('auth_token');
     const user = localStorage.getItem('twitch_user');
+    
     try {
         const res = await fetch(`${WORKER_URL}?user=${user}&release_index=${index}&token=${token}`);
-        await showSuccessModal(`${name.toUpperCase()} has been released into the wild!`);
-        fetchTrainerData(user); 
-    } else {
-        alert("Server rejected the release.");
+        if (res.ok) {
+            await showSuccessModal(`${name.toUpperCase()} has been released into the wild!`);
+            fetchTrainerData(user); 
+        } else {
+            alert("Server rejected the release.");
+        }
+    } catch (e) { 
+        alert("Server communication error."); 
     }
-    catch (e) { alert("Server error."); }
 }
 
 async function toggleFavoriteDialog(index) {
@@ -278,6 +281,18 @@ function customPromptSlot() {
     });
 }
 
+function showSuccessModal(message) {
+    return new Promise(res => {
+        const m = document.getElementById('success-modal');
+        document.getElementById('success-text').innerText = message;
+        m.classList.remove('hidden');
+        document.getElementById('success-close').onclick = () => {
+            m.classList.add('hidden');
+            res();
+        };
+    });
+}
+
 async function openDetailModal(poke) {
     const m = document.getElementById('detail-modal'), i = document.getElementById('detail-card-inner');
     const isShiny = poke.s === 1;
@@ -299,15 +314,3 @@ async function openDetailModal(poke) {
 
 document.getElementById('open-drawer').onclick = () => document.getElementById('info-drawer').classList.remove('hidden');
 document.getElementById('close-drawer').onclick = () => document.getElementById('info-drawer').classList.add('hidden');
-
-function showSuccessModal(message) {
-    return new Promise(res => {
-        const m = document.getElementById('success-modal');
-        document.getElementById('success-text').innerText = message;
-        m.classList.remove('hidden');
-        document.getElementById('success-close').onclick = () => {
-            m.classList.add('hidden');
-            res();
-        };
-    });
-}
