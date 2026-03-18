@@ -185,9 +185,12 @@ async function releasePokemon(index, name) {
     const user = localStorage.getItem('twitch_user');
     try {
         const res = await fetch(`${WORKER_URL}?user=${user}&release_index=${index}&token=${token}`);
-        alert(await res.text());
+        await showSuccessModal(`${name.toUpperCase()} has been released into the wild!`);
         fetchTrainerData(user); 
-    } catch (e) { alert("Server error."); }
+    } else {
+        alert("Server rejected the release.");
+    }
+    catch (e) { alert("Server error."); }
 }
 
 async function toggleFavoriteDialog(index) {
