@@ -224,11 +224,35 @@ async function releasePokemon(index, name) {
 }
 
 function toggleFavoriteDialog(index) {
-    const slot = prompt("Which Favorite Slot? (1, 2, 3, or 4)");
-    if (!slot || slot < 1 || slot > 4) return;
-    updateFavorite(slot - 1, index);
-}
+    let availableSlot = -1;
 
+    // 1. Check all 4 slots to see if any are holding the default Poke-ball
+    for (let i = 0; i < 4; i++) {
+        const img = document.querySelector(`#fav-${i} img`);
+        if (img && img.src.includes('poke-ball.png')) {
+            availableSlot = i;
+            break; // Stop looking once we find the first empty one
+        }
+    }
+
+    // 2. If we found an empty slot, automatically use it!
+    if (availableSlot !== -1) {
+        updateFavorite(availableSlot, index);
+    } 
+    // 3. If all 4 are full, fall back to asking them which one to overwrite
+    else {
+        const slotInput = prompt("Your favorites are full! Which slot (1, 2, 3, or 4) would you like to replace?");
+        if (!slotInput) return; // User cancelled
+        
+        const slotNum = parseInt(slotInput);
+        if (isNaN(slotNum) || slotNum < 1 || slotNum > 4) {
+            alert("Invalid slot. Please enter a number between 1 and 4.");
+            return;
+        }
+        
+        updateFavorite(slotNum - 1, index);
+    }
+}
 async function updateFavorite(slot, pokeIndex) {
     const user = localStorage.getItem('twitch_user');
     const token = localStorage.getItem('auth_token');
