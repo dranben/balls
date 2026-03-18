@@ -422,3 +422,10 @@ header {
     color: #ffd700;
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);
 }
+
+/* Shrink the star slightly inside the top bar so it doesn't block the name */
+.fav-slot .fav-btn {
+    font-size: 1.2rem;
+    top: 4px;
+    left: 4px;
+}
