@@ -6,17 +6,24 @@ let fullCollection = []; // The master list of Pokemon objects/strings
 
 // --- 1. INITIALIZATION ---
 window.onload = async () => {
-    // Check if we are returning from Twitch or have a saved session
+    // 1. Handle Twitch redirect/session
     await handleTwitchRedirect();
 
-    // Determine which trainer's storage to display
     const urlParams = new URLSearchParams(window.location.search);
-    const userToLoad = urlParams.get('user') || localStorage.getItem('twitch_user') || 'dranben';
-    
-    // Sync the search input field
-    document.getElementById('username-input').value = userToLoad;
-    
-    // Load the trainer's data
+    const urlUser = urlParams.get('user');
+    const loggedInUser = localStorage.getItem('twitch_user');
+
+    // 2. DATA LOGIC: What should the page actually show?
+    // We default to 'dranben' for the CONTENT so the page isn't blank.
+    const userToLoad = urlUser || loggedInUser || 'dranben';
+
+    // 3. INPUT LOGIC: What should the SEARCH BOX show?
+    // We ONLY fill the box if there is a specific user in the URL or a login.
+    // If it's a fresh visit (no URL user, no login), we leave it "" (empty).
+    const inputField = document.getElementById('username-input');
+    inputField.value = urlUser || loggedInUser || "";
+
+    // 4. Load the actual Pokemon
     fetchTrainerData(userToLoad);
 };
 
