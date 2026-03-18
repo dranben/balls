@@ -176,14 +176,18 @@ function renderSprites(list) {
             return; 
         }
 
+        // Check if this Pokemon is a favorite 
+        const isFavorited = (item.fav !== undefined && item.fav >= 0 && item.fav <= 3);
+    
         const card = document.createElement('div');
         card.className = `pokemon-card ${isShiny ? 'shiny-card' : ''}`;
         
+        // Update the button to use the 'active' class 
         card.innerHTML = `
             <button class="release-btn" title="Release ${name}" 
                     onclick="releasePokemon(${actualIndex}, '${name}')">×</button>
             
-            <button class="fav-btn" title="Set Favorite"
+            <button class="fav-btn ${isFavorited ? 'active' : ''}" title="${isFavorited ? 'Remove Favorite' : 'Set Favorite'}"
                     onclick="toggleFavoriteDialog(${actualIndex})">★</button>
             
             <div class="pokemon-name">${name.toUpperCase()}</div>
