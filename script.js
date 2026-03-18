@@ -296,3 +296,15 @@ async function openDetailModal(poke) {
 
 document.getElementById('open-drawer').onclick = () => document.getElementById('info-drawer').classList.remove('hidden');
 document.getElementById('close-drawer').onclick = () => document.getElementById('info-drawer').classList.add('hidden');
+
+function showSuccessModal(message) {
+    return new Promise(res => {
+        const m = document.getElementById('success-modal');
+        document.getElementById('success-text').innerText = message;
+        m.classList.remove('hidden');
+        document.getElementById('success-close').onclick = () => {
+            m.classList.add('hidden');
+            res();
+        };
+    });
+}
