@@ -309,3 +309,67 @@ header {
     color: #51ff00; /* Neon green for the actual name */
     text-shadow: 0 0 10px rgba(81, 255, 0, 0.5);
 }
+
+.favorites-container {
+    background: rgba(81, 255, 0, 0.05);
+    border: 1px solid #222;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.favorites-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: #51ff00;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.favorites-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.fav-slot {
+    width: 80px;
+    height: 80px;
+    background: #111;
+    border: 2px solid #333;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.fav-slot:hover {
+    border-color: #51ff00;
+    box-shadow: 0 0 15px rgba(81, 255, 0, 0.2);
+}
+
+.fav-slot img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+/* Add a star to the card for the main grid so you can click to favorite */
+.fav-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: #444;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: none; /* Only owner can see */
+}
+
+.is-owner .fav-btn { display: block; }
+.fav-btn.active { color: #ffd700; text-shadow: 0 0 5px gold; }
