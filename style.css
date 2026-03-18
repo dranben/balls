@@ -194,3 +194,89 @@ header {
         gap: 15px;
     }
 }
+
+/* --- HEADER & NAVIGATION --- */
+.header-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* --- TWITCH LOGIN BUTTON --- */
+#login-btn {
+    background-color: #9146FF; /* Twitch Purple */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 0 #6441a5; /* Darker purple bottom border */
+}
+
+#login-btn:hover {
+    background-color: #a970ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(145, 70, 255, 0.4);
+}
+
+#login-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 0 0 #6441a5;
+}
+
+/* --- TRAINER SEARCH UNIT --- */
+.search-trainer {
+    display: flex;
+    gap: 0; /* Merges input and button */
+}
+
+#username-input {
+    background: #000;
+    border: 2px solid #333;
+    border-right: none; /* Connects to button */
+    color: #51ff00;
+    padding: 10px 15px;
+    border-radius: 8px 0 0 8px;
+    font-family: 'Segoe UI', sans-serif;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#username-input:focus {
+    border-color: #51ff00;
+}
+
+.search-trainer button {
+    background: #51ff00;
+    color: #000;
+    border: 2px solid #51ff00;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.search-trainer button:hover {
+    background: #000;
+    color: #51ff00;
+}
+
+/* --- USER DISPLAY (Logged In State) --- */
+#user-display {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    color: #51ff00;
+    background: rgba(81, 255, 0, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px hide #51ff00;
+    text-shadow: 0 0 8px rgba(81, 255, 0, 0.5);
+}
