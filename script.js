@@ -132,46 +132,97 @@ function updateFavoriteUI(favorites) {
     }
 }
 
-// --- 5. RENDERING ---
+// --- 5. THE RENDERING ENGINE ---
 function renderSprites(list) {
     const display = document.getElementById('pokemon-display');
     if (!display) return;
+    
     display.innerHTML = "";
+    if (!list || list.length === 0) {
+        display.innerHTML = "<p>No Pokémon found in this storage unit.</p>";
+        return;
+    }
 
+    // Check if the person viewing is the owner of this collection
     const loggedInUser = localStorage.getItem('twitch_user');
     const trainerNameSpan = document.getElementById('trainer-name');
     const currentTrainer = trainerNameSpan ? trainerNameSpan.innerText.toLowerCase() : '';
     const isOwner = loggedInUser && loggedInUser.toLowerCase() === currentTrainer;
 
+    // Attach ownership class to the body so CSS can reveal buttons
     if (isOwner) document.body.classList.add('is-owner');
     else document.body.classList.remove('is-owner');
 
     list.forEach((item) => {
+        // Use the originalIndex we mapped in fetchTrainerData or sorting
         const actualIndex = item.originalIndex !== undefined ? item.originalIndex : fullCollection.indexOf(item);
-        let name, isShiny, atk, def, hp;
+        
+        let name, isShiny, atk, def, hp, hasPokerus;
 
+        // Modern Object Handling
         if (typeof item === 'object' && item.n) {
-            name = item.n; isShiny = item.s === 1; [atk, def, hp] = item.iv || [0, 0, 0];
+            name = item.n;
+            isShiny = item.s === 1;
+            hasPokerus = item.p === 1;
+            [atk, def, hp] = item.iv || [0, 0, 0];
+        } 
+        // Legacy String Handling
+        else if (typeof item === 'string') {
+            isShiny = item.includes('✨');
+            hasPokerus = false;
+            name = item.split('(')[0].replace('✨', '').trim();
+            const ivMatch = item.match(/\((.*?)\)/);
+            [atk, def, hp] = ivMatch ? ivMatch[1].split('/').map(Number) : [0, 0, 0];
         } else {
-            isShiny = item.includes('✨'); name = item.split('(')[0].replace('✨', '').trim();
-            const ivMatch = item.match(/\((.*?)\)/); [atk, def, hp] = ivMatch ? ivMatch[1].split('/').map(Number) : [0, 0, 0];
+            return; 
         }
 
+        // Check if this Pokemon is a favorite 
         const isFavorited = (item.fav !== undefined && item.fav >= 0 && item.fav <= 3);
+
         const card = document.createElement('div');
+        // Adds 'shiny-card' class for the holographic CSS effect
         card.className = `pokemon-card ${isShiny ? 'shiny-card' : ''}`;
+        
         card.innerHTML = `
             ${isShiny ? '<div class="shiny-sparkle-1">✨</div><div class="shiny-sparkle-2">✨</div>' : ''}
-            <button class="release-btn" onclick="releasePokemon(${actualIndex}, '${name}')">×</button>
-            <button class="fav-btn ${isFavorited ? 'active' : ''}" onclick="toggleFavoriteDialog(${actualIndex})">★</button>
+            
+            <button class="release-btn" title="Release ${name}" 
+                    onclick="releasePokemon(${actualIndex}, '${name}')">×</button>
+            
+            <button class="fav-btn ${isFavorited ? 'active' : ''}" title="${isFavorited ? 'Remove Favorite' : 'Set Favorite'}"
+                    onclick="toggleFavoriteDialog(${actualIndex})">★</button>
+            
             <div class="pokemon-name">${name.toUpperCase()}</div>
-            <img src="https://img.pokemondb.net/sprites/home/${isShiny ? 'shiny' : 'normal'}/${name.toLowerCase()}.png" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+            ${hasPokerus ? '<div class="pokerus-tag">🧬 POKERUS</div>' : ''}
+            
+            <img src="https://img.pokemondb.net/sprites/home/${isShiny ? 'shiny' : 'normal'}/${name.toLowerCase()}.png" 
+                 alt="${name}"
+                 onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+            
             <div class="stats-box">
-                <div class="stat-row"><span class="stat-label">ATK</span><span class="stat-value ${atk === 15 ? 'perfect-stat' : ''}">${atk}</span></div>
-                <div class="stat-row"><span class="stat-label">DEF</span><span class="stat-value ${def === 15 ? 'perfect-stat' : ''}">${def}</span></div>
-                <div class="stat-row"><span class="stat-label">STA</span><span class="stat-value ${hp === 15 ? 'perfect-stat' : ''}">${hp}</span></div>
-            </div>`;
-        card.onclick = (e) => { if (e.target.tagName !== 'BUTTON') openDetailModal(item); };
+                <div class="stat-row">
+                    <span class="stat-label">ATK</span>
+                    <span class="stat-value ${atk === 15 ? 'perfect-stat' : ''}">${atk}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">DEF</span>
+                    <span class="stat-value ${def === 15 ? 'perfect-stat' : ''}">${def}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">STA</span>
+                    <span class="stat-value ${hp === 15 ? 'perfect-stat' : ''}">${hp}</span>
+                </div>
+            </div>
+        `;
+
+        // Handle the flip animation / Pokedex detail view
+        card.onclick = (e) => {
+            // Do not flip if they clicked a button
+            if (e.target.tagName.toLowerCase() === 'button') return;
+            openDetailModal(item);
+        };
+
         display.appendChild(card);
     });
 }
