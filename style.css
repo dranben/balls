@@ -426,6 +426,6 @@ header {
 /* Shrink the star slightly inside the top bar so it doesn't block the name */
 .fav-slot .fav-btn {
     font-size: 1.2rem;
-    top: 4px;
-    left: 4px;
+    top: 0px;
+    left: 0px;
 }
