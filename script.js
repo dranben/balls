@@ -220,6 +220,12 @@ function renderSprites(list) {
                 </div>
             </div>
         `;
+        // ---> NEW: Add the click event to open the Pokedex <---
+        card.onclick = (e) => {
+            // Ignore the click if they clicked a button (like favorite or release)
+            if (e.target.tagName.toLowerCase() === 'button') return;
+            openDetailModal(item);
+        };
         display.appendChild(card);
     });
 }
