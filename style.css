@@ -705,3 +705,44 @@ header {
     background: #51ff00;
     color: #000;
 }
+
+/* --- SHINY CARD HOLOGRAPHIC EFFECT --- */
+.shiny-card {
+    position: relative;
+    overflow: hidden; /* Keeps the shine inside the card boundaries */
+    border: 2px solid #ffd700 !important; /* Golden border for shinies */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* The Animated Shine Beam */
+.shiny-card::after {
+    content: "";
+    position: absolute;
+    top: -150%;
+    left: -150%;
+    width: 300%;
+    height: 300%;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0) 45%,
+        rgba(255, 255, 255, 0.1) 48%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.1) 52%,
+        rgba(255, 255, 255, 0) 55%
+    );
+    transform: rotate(20deg);
+    animation: holo-sheen 4s infinite blur; /* Slow, elegant shimmer */
+    pointer-events: none; /* Allows clicks to pass through to the card */
+}
+
+@keyframes holo-sheen {
+    0% { transform: translate(-20%, -20%) rotate(20deg); }
+    20% { transform: translate(20%, 20%) rotate(20deg); }
+    100% { transform: translate(20%, 20%) rotate(20deg); } /* Pause at the end for a loop effect */
+}
+
+/* Optional: Make the star button on Shinies glow extra bright */
+.shiny-card .fav-btn.active {
+    filter: drop-shadow(0 0 5px #fff);
+    color: #fff !important;
+}
