@@ -280,3 +280,15 @@ header {
     border: 1px hide #51ff00;
     text-shadow: 0 0 8px rgba(81, 255, 0, 0.5);
 }
+
+#trainer-display-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.4rem; /* Slightly smaller to fit the full line */
+    color: #777; /* Grey label color */
+    margin: 0;
+}
+
+#trainer-name {
+    color: #51ff00; /* Neon green for the actual name */
+    text-shadow: 0 0 10px rgba(81, 255, 0, 0.5);
+}
