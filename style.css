@@ -877,7 +877,7 @@ header {
 .fav-slot:first-child::before {
     content: "BATTLE SLOT";
     position: absolute;
-    top: -20px; /* Pushes the banner completely up and out of the box */
+    top: -10px; /* Pushes the banner completely up and out of the box */
     left: -2px; /* Shifts left slightly to cover the 2px red border */
     width: calc(100% + 4px); /* Stretches to cover both left and right borders */
     background-color: #ff4b4b;
