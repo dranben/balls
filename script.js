@@ -436,34 +436,44 @@ if (repairBtn) {
 // --- 9. TAB CONTROLLER (Updated Fix) ---
 function initTabs() {
     const tabs = document.querySelectorAll('.tab-btn');
-    console.log("Found tabs:", tabs.length); // Should say 3
+    console.log("System: Found", tabs.length, "tabs.");
+
+    if (tabs.length === 0) {
+        console.error("Critical Error: No elements with class '.tab-btn' found in HTML!");
+        return;
+    }
 
     tabs.forEach(button => {
-        button.onclick = () => { // Using .onclick directly is more reliable for debugging
+        button.onclick = (e) => {
+            // Prevent any default behavior
+            e.preventDefault();
+            
             const targetTab = button.getAttribute('data-tab');
-            console.log("Switching to tab:", targetTab);
+            console.log("Action: Switching to", targetTab);
 
-            // 1. Reset Buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            // 1. Toggle Button UI
+            tabs.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
-            // 2. Reset Content
+            // 2. Toggle Content Visibility
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
-                content.style.display = 'none';
             });
 
-            // 3. Show Target
             const targetEl = document.getElementById(`${targetTab}-tab`);
             if (targetEl) {
                 targetEl.classList.add('active');
-                targetEl.style.display = 'block';
+            } else {
+                console.error(`Error: Element #${targetTab}-tab not found!`);
             }
 
-            // 4. Load Data
+            // 3. Load Data
             if (targetTab === 'market') loadMarket();
             if (targetTab === 'inventory') loadInventory();
-            if (targetTab === 'collection') fetchTrainerData(document.getElementById('trainer-name').innerText.toLowerCase());
+            if (targetTab === 'collection') {
+                const name = document.getElementById('trainer-name').innerText.toLowerCase();
+                fetchTrainerData(name);
+            }
         };
     });
 }
