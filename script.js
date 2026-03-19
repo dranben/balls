@@ -8,6 +8,7 @@ let fullCollection = [];
 let isSavingFavorite = false;
 
 window.onload = async () => {
+    console.log("OS Initializing...");
     await handleTwitchRedirect();
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -27,9 +28,12 @@ window.onload = async () => {
         sortDropdown.value = savedSort;
     }
 
+    // 1. Start the data fetch
     fetchTrainerData(userToLoad);
+    
+    // 2. WAKE UP THE BUTTONS
+    initTabs(); 
 };
-
 // --- 2. TWITCH AUTH & SESSION MANAGEMENT ---
 async function handleTwitchRedirect() {
     const urlParams = new URLSearchParams(window.location.search);
