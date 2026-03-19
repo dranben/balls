@@ -265,39 +265,49 @@ async function toggleFavoriteDialog(index) {
     }
 }
 
+let isBusyUpdating = false; // Internal lock
+
 async function updateFavorite(slot, pokeIndex) {
-    if (isSavingFavorite) return; // Prevent "Double Clicking" glitches
-    isSavingFavorite = true;
+    if (isBusyUpdating) return; 
+    isBusyUpdating = true;
 
-    const user = localStorage.getItem('twitch_user');
-    const token = localStorage.getItem('auth_token');
-    const targetPoke = fullCollection[pokeIndex];
-
-    // --- 1. OPTIMISTIC UI (THE INSTANT CHANGE) ---
-    if (slot === -1) {
-        delete targetPoke.fav; 
-    } else {
-        fullCollection.forEach(p => { if (p.fav === slot) delete p.fav; });
-        targetPoke.fav = slot;
-    }
-
-    // Immediately Redraw (This makes the star yellow)
-    updateFavoriteUI_Local(); // Helper to just refresh the top bar
-    applySortAndRender(document.getElementById('sort-order').value);
-
-    // --- 2. THE BACKGROUND SAVE ---
     try {
+        const user = localStorage.getItem('twitch_user');
+        const token = localStorage.getItem('auth_token');
+        const targetPoke = fullCollection[pokeIndex];
+
+        // 1. OPTIMISTIC UI (Instant change for the user)
+        if (slot === -1) {
+            delete targetPoke.fav; 
+        } else {
+            // Remove this slot from any other mon first
+            fullCollection.forEach(p => { if (p.fav === slot) delete p.fav; });
+            targetPoke.fav = slot;
+        }
+
+        // 2. REDRAW UI IMMEDIATELY
+        const tempFavorites = [null, null, null, null];
+        fullCollection.forEach(p => {
+            if (p.fav !== undefined && p.fav >= 0 && p.fav <= 3) {
+                tempFavorites[p.fav] = p;
+            }
+        });
+        
+        updateFavoriteUI(tempFavorites);
+        applySortAndRender(document.getElementById('sort-order').value);
+
+        // 3. BACKGROUND SAVE
         const res = await fetch(`${WORKER_URL}?user=${user}&set_favorite=true&slot=${slot}&index=${pokeIndex}&token=${token}`);
         
         if (!res.ok) {
-            // IF SERVER FAILS: Only then do we revert and show error
-            console.error("Save failed");
-            fetchTrainerData(user); // Force a hard reset to reality
+            console.error("Server rejected save. Syncing...");
+            fetchTrainerData(user); // If it failed, pull the "truth" from the DB
         }
     } catch (e) {
-        console.error("Network error");
+        console.error("Network error during favorite update:", e);
     } finally {
-        isSavingFavorite = false; // Unlock the button
+        // This line is CRITICAL. It runs no matter what happens above.
+        isBusyUpdating = false; 
     }
 }
 
