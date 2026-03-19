@@ -494,7 +494,8 @@ async function loadMarket() {
             const card = document.createElement('div');
             card.className = 'item-card';
             card.innerHTML = `
-                <div class="item-icon">${item.icon}</div>
+                <img src="${item.img}" alt="${item.name}" 
+                    style="width:60px; height:60px; object-fit:contain; image-rendering:pixelated; margin-bottom:4px;">
                 <div class="item-name">${item.name.toUpperCase()}</div>
                 <div class="item-desc">${item.desc}</div>
                 <div class="item-price">₽${item.price.toLocaleString()}</div>
@@ -554,7 +555,8 @@ async function loadInventory() {
       const card = document.createElement('div');
       card.className = 'item-card';
       card.innerHTML = `
-        <div class="item-icon">${itemInfo.icon}</div>
+        <img src="${itemInfo.img}" alt="${itemInfo.name}" 
+             style="width:60px; height:60px; object-fit:contain; image-rendering:pixelated; margin-bottom:4px;">
         <div class="item-name">${itemInfo.name.toUpperCase()} (x${count})</div>
         <div class="item-desc">${itemInfo.desc}</div>
         ${isOwner ? `<button class="use-btn" onclick="useItem('${itemId}')">USE ITEM</button>` : ''}
