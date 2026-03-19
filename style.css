@@ -947,7 +947,13 @@ header {
     border-radius: 4px;
 }
 
-.item-icon { font-size: 2rem; margin-bottom: 10px; }
+.item-icon img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.15));
+}
 .item-name { font-size: 0.6rem; color: #fff; margin-bottom: 5px; font-weight: bold;}
 .item-price { color: #ffd700; font-size: 0.6rem; margin-bottom: 10px; }
 .item-desc { font-size: 0.5rem; color: #888; margin-bottom: 15px; line-height: 1.4; }
