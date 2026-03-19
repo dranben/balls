@@ -272,20 +272,25 @@ async function updateFavorite(slot, pokeIndex) {
     isBusyUpdating = true;
 
     try {
-        const user = localStorage.getItem('twitch_user');
+        // --- 1. PREPARE DATA ---
+        // Force the username to lowercase here to ensure the KV Database match
+        const rawUser = localStorage.getItem('twitch_user') || "";
+        const user = rawUser.toLowerCase(); 
+        
         const token = localStorage.getItem('auth_token');
         const targetPoke = fullCollection[pokeIndex];
 
-        // 1. OPTIMISTIC UI (Instant change for the user)
+        if (!targetPoke) return;
+
+        // --- 2. OPTIMISTIC UI (Instant change) ---
         if (slot === -1) {
             delete targetPoke.fav; 
         } else {
-            // Remove this slot from any other mon first
             fullCollection.forEach(p => { if (p.fav === slot) delete p.fav; });
             targetPoke.fav = slot;
         }
 
-        // 2. REDRAW UI IMMEDIATELY
+        // --- 3. REDRAW UI ---
         const tempFavorites = [null, null, null, null];
         fullCollection.forEach(p => {
             if (p.fav !== undefined && p.fav >= 0 && p.fav <= 3) {
@@ -296,17 +301,18 @@ async function updateFavorite(slot, pokeIndex) {
         updateFavoriteUI(tempFavorites);
         applySortAndRender(document.getElementById('sort-order').value);
 
-        // 3. BACKGROUND SAVE
+        // --- 4. BACKGROUND SAVE (Using the lowercase user) ---
         const res = await fetch(`${WORKER_URL}?user=${user}&set_favorite=true&slot=${slot}&index=${pokeIndex}&token=${token}`);
         
         if (!res.ok) {
-            console.error("Server rejected save. Syncing...");
-            fetchTrainerData(user); // If it failed, pull the "truth" from the DB
+            const errorMsg = await res.text();
+            console.error("Server rejected save:", errorMsg);
+            // If it failed, pull the "truth" from the DB
+            fetchTrainerData(user); 
         }
     } catch (e) {
         console.error("Network error during favorite update:", e);
     } finally {
-        // This line is CRITICAL. It runs no matter what happens above.
         isBusyUpdating = false; 
     }
 }
