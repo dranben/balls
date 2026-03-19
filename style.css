@@ -833,3 +833,32 @@ header {
         transparent 55%
     );
 }
+
+/* --- SYSTEM BUTTONS --- */
+.neon-btn {
+    background: transparent;
+    border: 2px solid #51ff00;
+    color: #51ff00;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    transition: 0.2s;
+    border-radius: 4px;
+}
+
+.neon-btn:hover {
+    background: #51ff00;
+    color: #000;
+    box-shadow: 0 0 15px #51ff00;
+}
+
+/* Red version for "destructive" or "repair" actions if you prefer */
+#repair-btn {
+    border-color: #ff3333;
+    color: #ff3333;
+}
+
+#repair-btn:hover {
+    background: #ff3333;
+    color: #fff;
+    box-shadow: 0 0 15px #ff3333;
+}
