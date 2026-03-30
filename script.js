@@ -1,5 +1,5 @@
 const CLIENT_ID = "oqdrp3gkw3lczkb14z6h74ycboupib"; 
-const REDIRECT_URI = "https://dranben.com";
+const REDIRECT_URI = "https://pokemon.dranben.com";
 const WORKER_URL = "https://pokemon.brandenkenn.workers.dev";
 
 let fullCollection = []; 
